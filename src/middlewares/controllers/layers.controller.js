@@ -1,6 +1,5 @@
 import { queryDatabase } from '../services/db.service.js';
 
-// Consulta SQL para obtener el catálogo de capas
 const CATALOG_QUERY = `
     SELECT
         g.id AS group_id, g.name AS group_name, g.icon AS group_icon,
@@ -11,19 +10,24 @@ const CATALOG_QUERY = `
         layer_groups g
     JOIN
         layers l ON g.id = l.group_id
+    WHERE 
+        g.institution_id = $1 AND l.institution_id = $1
     ORDER BY
         g.name, l.name;
 `;
 
-// Controlador para obtener el catálogo de capas
 export const getCatalog = async (req, res) => {
-    // Registrar la petición con información del usuario
-    console.log(`Petición de catálogo por usuario: ${req.user.email} (Rol: ${req.user.rol})`);
+    const institution = req.user.institution;
 
-    // Ejecutar la consulta para obtener las capas
-    const result = await queryDatabase(CATALOG_QUERY);
+    if (!institution) {
+        const err = new Error('Token inválido: no se encontró institución.');
+        err.status = 400;
+        throw err;
+    }
 
-    // Estructurar la respuesta en formato de catálogo
+    console.log(`Petición de catálogo por usuario: ${req.user.email} (Institución: ${institution})`);
+
+    const result = await queryDatabase(CATALOG_QUERY, [institution]);
     const catalog = {};
     result.rows.forEach(row => {
         const groupId = row.group_id;
@@ -34,16 +38,15 @@ export const getCatalog = async (req, res) => {
                 layers: [],
             };
         }
-        // Añadir la capa al grupo correspondiente
         catalog[groupId].layers.push({
             id: row.layer_id,
             name: row.layer_name,
             description: row.layer_description,
             type: row.layer_type,
-            symbology: row.symbology,
+            symbology: row.layer_symbology, 
             workspace: row.workspace,
             wmsLayerName: row.wms_layer_name,
-            url: row.url,
+            layerType: row.layerType,
             options: row.options,
             bounds: row.bounds,
         });

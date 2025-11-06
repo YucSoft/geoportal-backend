@@ -10,4 +10,4 @@ const router = Router();
 // GET /api/v1/layers/catalog
 router.get('/catalog', apiLimiter, checkJwt, asyncHandler(getCatalog));
 
-export default router;
+export default router;  
