@@ -22,7 +22,7 @@ export const queryDatabase = async (sql, params) => {
         client = await pool.connect();
         const result = await client.query(sql, params);
         const duration = Date.now() - start;
-        console.log(`[DB] Consulta ejecutada (${duration}ms): ${sql.substring(0, 50)}...`);
+        console.log(`Consulta ejecutada (${duration}ms): ${sql.substring(0, 50)}...`);
         return result;
     } catch (e) {
         throw e; 
