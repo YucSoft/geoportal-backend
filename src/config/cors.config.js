@@ -1,4 +1,3 @@
-// src/config/cors.config.js
 const allowedOrigins = [
     'https://sigyucatan.com',
     'http://localhost:5173'

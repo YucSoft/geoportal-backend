@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { queryDatabase } from '../../services/db.service.js';
-
+import { queryDatabase } from '../services/db.service.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -34,7 +33,7 @@ export const login = async (req, res) => {
         userId: user.id,
         email: user.email,
         rol: user.rol,
-        institution: user.institution_id 
+        institution: user.institution_id
     };
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
