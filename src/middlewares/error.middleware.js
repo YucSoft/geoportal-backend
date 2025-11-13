@@ -1,15 +1,23 @@
-// Middleware para manejar errores no capturados en la aplicación
-const errorMiddleware = (err, req, res, next) => {
-    console.error('--- ERROR NO CAPTURADO ---');
-    console.error(err.stack);
-    console.error('--------------------------');
+import ApiError from '../utils/ApiError.js';
 
-    // Responder con un mensaje de error genérico
-    const statusCode = err.status || 500;
-    const message = err.message || 'Error interno del servidor.';
-    
-    // Enviar la respuesta de error
-    res.status(statusCode).json({ error: message });
+const errorMiddleware = (err, req, res, next) => {
+    console.error('--- ERROR CAPTURADO ---');
+    console.error(err.message);
+    console.error(err.stack);
+    console.error('-----------------------');
+
+    let statusCode = 500;
+    let message = 'Error interno del servidor.';
+
+    if (err instanceof ApiError) {
+        statusCode = err.statusCode;
+        message = err.message;
+    }
+
+    res.status(statusCode).json({
+        message: message,
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    });
 };
 
 export default errorMiddleware;

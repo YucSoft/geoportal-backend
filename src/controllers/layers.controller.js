@@ -1,4 +1,6 @@
 import { queryDatabase } from '../services/db.service.js';
+import ApiError from '../utils/ApiError.js';
+
 const CATALOG_QUERY = `
     SELECT
         g.id AS group_id, 
@@ -26,9 +28,7 @@ export const getCatalog = async (req, res, next) => {
     try {
         const institution = req.user.institution;
         if (!institution) {
-            const err = new Error('Token inválido: no se encontró institución.');
-            err.status = 400;
-            throw err;
+            throw new ApiError(400, 'Token inválido: no se encontró institución.');
         }
 
         console.log(`Petición de catálogo por usuario: ${req.user.email} (Institución: ${institution})`);

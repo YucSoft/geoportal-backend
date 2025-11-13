@@ -1,14 +1,12 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import layerRoutes from './layers.routes.js';
+import uploadRoutes from './upload.routes.js';
 
-// Initialize main router
 const router = Router();
 
-// /api/v1/auth/...
 router.use('/auth', authRoutes);
-
-// /api/v1/layers/...
 router.use('/layers', layerRoutes);
+router.use('/upload', uploadRoutes);
 
 export default router;
